@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Service de développement
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: docker-app-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev -- --host
+    profiles:
+      - dev
+
+  # Service de production
+  app-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: docker-app-prod
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    profiles:
+      - prod
+
+  # Service Nginx reverse proxy (optionnel pour la production)
+  nginx:
+    image: nginx:alpine
+    container_name: docker-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app-prod
+    profiles:
+      - prod
+      - nginx
+
+# Volumes pour persister les données
+volumes:
+  node_modules:
+
+# Réseau personnalisé
+networks:
+  default:
+    name: docker-app-network
