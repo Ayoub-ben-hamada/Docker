@@ -5,7 +5,8 @@ const navLinks = [
   { to: "/", label: "Introduction" },
   { to: "/fonctionnement", label: "Fonctionnement" },
   { to: "/exemple", label: "Exemple" },
-  { to: "/resume", label: "Résumé" }
+  { to: "/resume", label: "Résumé" },
+  { to: "/contact", label: "Contact" }
 ];
 
 export default function Navbar() {
